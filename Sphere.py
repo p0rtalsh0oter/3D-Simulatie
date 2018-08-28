@@ -189,7 +189,7 @@ def main():
     glutInitWindowPosition(50, 100)
 
         # Create the window with given title
-    glutCreateWindow('')
+    glutCreateWindow(b'Title')
 
         # Instantiate the sphere object
     s = Sphere(1.0)
