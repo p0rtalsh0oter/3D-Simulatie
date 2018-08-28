@@ -15,6 +15,9 @@ try:
     from OpenGL.GLUT import *
 except:
     print ("OpenGL wrapper for python not found")
+    
+# Define variables
+w_width, w_height = 700,700
 
 # Last time when sphere was re-displayed
 last_time = 0
@@ -185,7 +188,7 @@ def main():
     glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH)
 
         # Set the Window size and position
-    glutInitWindowSize(300, 300)
+    glutInitWindowSize(w_width, w_height)
     glutInitWindowPosition(50, 100)
 
         # Create the window with given title
