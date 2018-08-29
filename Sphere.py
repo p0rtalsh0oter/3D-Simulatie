@@ -52,6 +52,9 @@ class Sphere:
 
         # The surface type(Flat or Smooth)
         self.surface = GL_FLAT
+        
+        # Whether or not full screen has been enabled
+        self.full_screen = False
 
     # Initialize
     def init(self):
@@ -157,6 +160,15 @@ class Sphere:
                 self.surface = GL_SMOOTH
             else:
                 self.surface = GL_FLAT
+                
+        if key == GLUT_KEY_F11:
+            if not self.full_screen:
+                glutFullScreen()
+                self.full_screen = True
+            else:
+                glutReshapeWindow(w_width, w_height)
+                glutPositionWindow(50, 100)
+                self.full_screen = False
 
         self.compute_location()
         glutPostRedisplay()
