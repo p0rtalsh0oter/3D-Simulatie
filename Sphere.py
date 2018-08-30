@@ -4,9 +4,11 @@
 # Controls: UP/DOWN - scale up/down
 #           LEFT/RIGHT - rotate left/right
 #           F1 - Toggle surface as SMOOTH or FLAT
+#           F11 - Toggle fullscreen
 
 # Python imports
 from math import *
+import glfw
 
 # OpenGL imports for python
 try:
@@ -14,15 +16,51 @@ try:
     from OpenGL.GLU import *
     from OpenGL.GLUT import *
 except:
-    print ("OpenGL wrapper for python not found")
-    
+    print("OpenGL wrapper for python not found")
+
+# Define constants
+TITLE = "Sphere"
+
 # Define variables
-w_width, w_height = 700,700
+w_width = 700
+w_height = int(w_width / 16 * 9)
+up = False
+down = False
+left = False
+right = False
+
 
 # Last time when sphere was re-displayed
 last_time = 0
 
+# The window resize callback function.
+# This will be called by glfw whenever the width or height is altered
+def window_resize(window, width, height):
+    glViewport(0,0, width, height)
 
+# The key callback function. This will be called by glfw whenever something
+# happens with a key
+def key_callback(window, key, scancode, action, mode):
+    global up
+    global down
+    global left
+    global right
+    # Check if a key is held down.
+    if action == glfw.PRESS:
+        if key == glfw.KEY_UP:
+            up = True
+    # Check if a key is released.
+    if action == glfw.RELEASE:
+        if key == glfw.KEY_UP:
+            up = False
+    # I'm not sure about this one.
+    if action == glfw.REPEAT:
+        pass
+        
+        
+        
+
+    
 # The sphere class
 class Sphere:
 
@@ -52,8 +90,7 @@ class Sphere:
 
         # The surface type(Flat or Smooth)
         self.surface = GL_FLAT
-        
-        # Whether or not full screen has been enabled
+
         self.full_screen = False
 
     # Initialize
@@ -98,21 +135,35 @@ class Sphere:
         glLoadIdentity()
         glFrustum(-d * 0.5, d * 0.5, -d * 0.5, d * 0.5, d - 1.1, d + 1.1)
 
+
         # Set camera
         gluLookAt(x, y, z, 0, 0, 0, 0, 0, 1)
 
     # Display the sphere
     def display(self):
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-
-        # Set color to white
-        glColor3f(1.0, 1.0, 1.0)
+        
 
         # Set shade model
         glShadeModel(self.surface)
 
         self.draw()
-        glutSwapBuffers()
+
+    # Update the sphere
+    def update(self):
+        global up
+        global down
+        global left
+        global right
+        if up:
+            self.user_height += 0.1
+        if down:
+            self.user_height -= 0.1
+        if left:
+            self.user_theta += 0.1
+        if right:
+            self.user_theta -= 0.1
+            
+        
 
     # Draw the sphere
     def draw(self):
@@ -140,88 +191,115 @@ class Sphere:
             glEnd()
 
     # Keyboard controller for sphere
-    def special(self, key, x, y):
+##    def special(self, key, x, y):
+##
+##        # Scale the sphere up or down
+##        if key == GLUT_KEY_UP:
+##            self.user_height += 0.1
+##        if key == GLUT_KEY_DOWN:
+##            self.user_height -= 0.1
+##
+##        # Rotate the cube
+##        if key == GLUT_KEY_LEFT:
+##            self.user_theta += 0.1
+##        if key == GLUT_KEY_RIGHT:
+##            self.user_theta -= 0.1
+##
+##        # Toggle the surface
+##        if key == GLUT_KEY_F1:
+##            if self.surface == GL_FLAT:
+##                self.surface = GL_SMOOTH
+##            else:
+##                self.surface = GL_FLAT
+##        if key == GLUT_KEY_F11:
+##            if not self.full_screen:
+##                glutFullScreen()
+##                self.full_screen = True
+##            else:
+##                glutReshapeWindow(w_width, w_height)
+##                glutPositionWindow(50, 100)
+##                self.full_screen = False
+            
 
-        # Scale the sphere up or down
-        if key == GLUT_KEY_UP:
-            self.user_height += 0.1
-        if key == GLUT_KEY_DOWN:
-            self.user_height -= 0.1
-
-        # Rotate the cube
-        if key == GLUT_KEY_LEFT:
-            self.user_theta += 0.1
-        if key == GLUT_KEY_RIGHT:
-            self.user_theta -= 0.1
-
-        # Toggle the surface
-        if key == GLUT_KEY_F1:
-            if self.surface == GL_FLAT:
-                self.surface = GL_SMOOTH
-            else:
-                self.surface = GL_FLAT
-                
-        if key == GLUT_KEY_F11:
-            if not self.full_screen:
-                glutFullScreen()
-                self.full_screen = True
-            else:
-                glutReshapeWindow(w_width, w_height)
-                glutPositionWindow(50, 100)
-                self.full_screen = False
-
-        self.compute_location()
-        glutPostRedisplay()
+##        self.compute_location()
+##        glutPostRedisplay()
 
     # The idle callback
-    def idle(self):
-        global last_time
-        time = glutGet(GLUT_ELAPSED_TIME)
-
-        if last_time == 0 or time >= last_time + 40:
-            last_time = time
-            glutPostRedisplay()
+##    def idle(self):
+##        global last_time
+##        time = glutGet(GLUT_ELAPSED_TIME)
+##
+##        if last_time == 0 or time >= last_time + 40:
+##            last_time = time
+##            glutPostRedisplay()
 
     # The visibility callback
-    def visible(self, vis):
-        if vis == GLUT_VISIBLE:
-            glutIdleFunc(self.idle)
-        else:
-            glutIdleFunc(None)
+##    def visible(self, vis):
+##        if vis == GLUT_VISIBLE:
+##            glutIdleFunc(self.idle)
+##        else:
+##            glutIdleFunc(None)
 
 
 # The main function
 def main():
-
+    
     # Initialize the OpenGL pipeline
-    glutInit(sys.argv)
+    #glutInit(sys.argv)
 
     # Set OpenGL display mode
-    glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH)
+    #glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH)
 
-        # Set the Window size and position
-    glutInitWindowSize(w_width, w_height)
-    glutInitWindowPosition(50, 100)
+    # Set the Window size and position
+    #glutInitWindowSize(w_width, w_height)
+    #glutInitWindowPosition(50, 100)
 
-        # Create the window with given title
-    glutCreateWindow(b'Title')
+    # Create the window with given width, height and title
+    if not glfw.init():
+        return
 
-        # Instantiate the sphere object
+    window = glfw.create_window(w_width, w_height, TITLE, None, None)
+
+    if not window:
+        glfw.terminate()
+        return
+
+    glfw.make_context_current(window)
+    glfw.set_window_size_callback(window, window_resize)
+    glfw.set_key_callback(window, key_callback)
+    
+    #glfw.set_window_aspect_ratio(window, 16, 9)
+    # Instantiate the sphere object
     s = Sphere(1.0)
 
     s.init()
 
-        # Set the callback function for display
-    glutDisplayFunc(s.display)
+    # Set the callback function for display
+    #glutDisplayFunc(s.display)
 
-        # Set the callback function for the visibility
-    glutVisibilityFunc(s.visible)
+    # Set the callback function for the visibility
+    #glutVisibilityFunc(s.visible)
 
-        # Set the callback for special function
-    glutSpecialFunc(s.special)
+    # Set the callback for special function
+    #glutSpecialFunc(s.special)
 
-        # Run the OpenGL main loop
-    glutMainLoop()
+    # Run the OpenGL main loop
+    #glutMainLoop()
+
+    #Main loop
+    while not glfw.window_should_close(window):
+        #Update
+        glfw.poll_events()
+        s.update()
+
+        #Render
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+        glColor3f(1.0, 1.0, 1.0)
+        s.display()
+        #Swaps the front and back buffer
+        glfw.swap_buffers(window)
+
+    glfw.terminate()
 
 
 # Call the main function
