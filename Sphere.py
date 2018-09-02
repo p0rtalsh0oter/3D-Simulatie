@@ -11,12 +11,11 @@ from math import *
 import glfw
 
 # OpenGL imports for python
-try:
-    from OpenGL.GL import *
-    from OpenGL.GLU import *
-    from OpenGL.GLUT import *
-except:
-    print("OpenGL wrapper for python not found")
+
+from OpenGL.GL import *
+from OpenGL.GLU import *
+from OpenGL.GLUT import *
+
 
 # Define constants
 TITLE = "Sphere"
@@ -28,7 +27,7 @@ up = False
 down = False
 left = False
 right = False
-
+key = False
 
 # Last time when sphere was re-displayed
 last_time = 0
@@ -49,10 +48,30 @@ def key_callback(window, key, scancode, action, mode):
     if action == glfw.PRESS:
         if key == glfw.KEY_UP:
             up = True
-    # Check if a key is released.
     if action == glfw.RELEASE:
         if key == glfw.KEY_UP:
             up = False
+            
+    if action == glfw.PRESS:
+        if key == glfw.KEY_DOWN:
+            down = True
+    if action == glfw.RELEASE:
+        if key == glfw.KEY_DOWN:
+            down = False
+
+    if action == glfw.PRESS:
+        if key == glfw.KEY_LEFT:
+            left = True
+    if action == glfw.RELEASE:
+        if key == glfw.KEY_LEFT:
+            left = False
+            
+    if action == glfw.PRESS:
+        if key == glfw.KEY_RIGHT:
+            right = True
+    if action == glfw.RELEASE:
+        if key == glfw.KEY_RIGHT:
+            right = False
     # I'm not sure about this one.
     if action == glfw.REPEAT:
         pass
@@ -150,10 +169,10 @@ class Sphere:
 
     # Update the sphere
     def update(self):
-        global up
+        '''global up
         global down
         global left
-        global right
+        global right '''
         if up:
             self.user_height += 0.1
         if down:
@@ -194,8 +213,8 @@ class Sphere:
 ##    def special(self, key, x, y):
 ##
 ##        # Scale the sphere up or down
-##        if key == GLUT_KEY_UP:
-##            self.user_height += 0.1
+##            if key == GLUT_KEY_UP:
+##                self.user_height += 0.1
 ##        if key == GLUT_KEY_DOWN:
 ##            self.user_height -= 0.1
 ##
@@ -220,8 +239,8 @@ class Sphere:
 ##                glutPositionWindow(50, 100)
 ##                self.full_screen = False
             
-
-##        self.compute_location()
+# Zonder self.compute_location() bewegen de key-inputs de sphere niet
+        self.compute_location()
 ##        glutPostRedisplay()
 
     # The idle callback
@@ -267,7 +286,7 @@ def main():
     glfw.make_context_current(window)
     glfw.set_window_size_callback(window, window_resize)
     glfw.set_key_callback(window, key_callback)
-    
+    theta
     #glfw.set_window_aspect_ratio(window, 16, 9)
     # Instantiate the sphere object
     s = Sphere(1.0)
