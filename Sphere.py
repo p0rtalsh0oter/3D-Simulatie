@@ -84,7 +84,7 @@ def key_callback(window, key, scancode, action, mode):
 class Sphere:
 
     # Constructor for the sphere class
-    def __init__(self, radius):
+    def __init__(self, radius, x, y, z):
 
         # Radius of sphere
         self.radius = radius
@@ -94,6 +94,16 @@ class Sphere:
 
         # Number of longitudes in sphere
         self.longs = 100
+
+        # Positional variables
+        self.x = x
+        self.y = y
+        self.z = z
+
+        # Velocity variables
+        self.vx = 0
+        self.vy = 0
+        self.vz = 0
 
         self.user_theta = 0
         self.user_height = 0
@@ -142,10 +152,10 @@ class Sphere:
 
     # Compute location
     def compute_location(self):
-        x = 2 * cos(self.user_theta)
-        y = 2 * sin(self.user_theta)
-        z = self.user_height
-        d = sqrt(x * x + y * y + z * z)
+        x_pos = 2 * cos(self.user_theta) + self.x
+        y_pos = 2 * sin(self.user_theta) + self.y
+        z_pos = self.user_height + self.z
+        d = sqrt(x_pos * x_pos + y_pos * y_pos + z_pos * z_pos)
 
         # Set matrix mode
         glMatrixMode(GL_PROJECTION)
@@ -156,7 +166,7 @@ class Sphere:
 
 
         # Set camera
-        gluLookAt(x, y, z, 0, 0, 0, 0, 0, 1)
+        gluLookAt(x_pos, y_pos, z_pos, 0, 0, 0, 0, 0, 1)
 
     # Display the sphere
     def display(self):
@@ -169,6 +179,13 @@ class Sphere:
 
     # Update the sphere
     def update(self):
+
+        self.x += self.vx
+        self.y += self.vy
+        self.z += self.vz
+        
+        self.vy += 0.98
+        
         '''global up
         global down
         global left
@@ -286,10 +303,9 @@ def main():
     glfw.make_context_current(window)
     glfw.set_window_size_callback(window, window_resize)
     glfw.set_key_callback(window, key_callback)
-    theta
     #glfw.set_window_aspect_ratio(window, 16, 9)
     # Instantiate the sphere object
-    s = Sphere(1.0)
+    s = Sphere(1.0, 0, 0, 0)
 
     s.init()
 
